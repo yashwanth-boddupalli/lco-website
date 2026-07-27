@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Tiranga Cable TV & Internet</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <style>
+    /* ============================================================
+       DESIGN TOKENS (matching Tiranga branding)
+    ============================================================ */
+    :root {
+      --navy: #0A1628;
+      --royal: #1E4DB7;
+      --royal-light: #2563EB;
+      --royal-pale: #EFF6FF;
+      --accent: #F97316;
+      --accent-pale: #FFF7ED;
+      --green: #16A34A;
+      --green-pale: #F0FDF4;
+      --red: #DC2626;
+      --bg: #F8FAFC;
+      --card: #FFFFFF;
+      --text: #1E293B;
+      --text-mid: #475569;
+      --text-light: #94A3B8;
+      --border: #E2E8F0;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, .08), 0 1px 2px rgba(0, 0, 0, .04);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, .08), 0 2px 4px rgba(0, 0, 0, .04);
+      --shadow-lg: 0 10px 30px rgba(0, 0, 0, .10), 0 4px 8px rgba(0, 0, 0, .05);
+      --radius: 14px;
+      --radius-sm: 8px;
+      --radius-lg: 20px;
+      --transition: 0.22s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-size: 16px;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      font-family: inherit;
+      border: none;
+      background: none;
+    }
+
+    :focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    /* ============================================================
+       LOADING STATE (shown while guard checks auth)
+    ============================================================ */
+    #guard-loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      gap: 20px;
+    }
+
+    .guard-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--royal);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .guard-text {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      font-weight: 500;
+    }
+
+    /* ============================================================
+       ADMIN NAVBAR
+    ============================================================ */
+    .admin-nav {
+      background: var(--navy);
+      padding: 0 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, .08);
+    }
+
+    .admin-nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+
+    .admin-nav-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .admin-nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .admin-nav-logo-icon {
+      width: 36px;
+      height: 36px;
+      background: rgba(255, 255, 255, .1);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .admin-nav-logo-name {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.02em;
+    }
+
+    .admin-badge {
+      padding: 3px 10px;
+      background: rgba(249, 115, 22, .18);
+      border: 1px solid rgba(249, 115, 22, .3);
+      border-radius: 99px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .admin-nav-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .admin-user-info {
+      text-align: right;
+    }
+
+    .admin-user-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .admin-user-role {
+      font-size: 0.72rem;
+      color: rgba(255, 255, 255, .5);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      background: rgba(220, 38, 38, .15);
+      border: 1px solid rgba(220, 38, 38, .3);
+      color: #FCA5A5;
+      border-radius: 99px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      transition: all var(--transition);
+    }
+
+    .logout-btn:hover {
+      background: rgba(220, 38, 38, .3);
+      color: #fff;
+    }
+
+    /* ============================================================
+       COMING SOON CONTENT
+    ============================================================ */
+    #protected-content {
+      display: none;
+    }
+
+    .coming-soon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(100vh - 64px);
+      text-align: center;
+      padding: 40px 24px;
+    }
+
+    .coming-soon-icon {
+      width: 100px;
+      height: 100px;
+      background: var(--royal-pale);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      margin-bottom: 28px;
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(30, 77, 183, .15);
+      }
+
+      50% {
+        box-shadow: 0 0 0 20px rgba(30, 77, 183, 0);
+      }
+    }
+
+    .coming-soon h1 {
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+
+    .coming-soon p {
+      font-size: 1.05rem;
+      color: var(--text-mid);
+      max-width: 420px;
+      line-height: 1.7;
+      margin-bottom: 36px;
+    }
+
+    .coming-soon-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+
+    .feature-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text-mid);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .home-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 12px 28px;
+      background: var(--royal);
+      color: #fff;
+      border-radius: 99px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      box-shadow: 0 4px 16px rgba(30, 77, 183, .25);
+      transition: all var(--transition);
+    }
+
+    .home-link:hover {
+      background: var(--royal-light);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(30, 77, 183, .35);
+    }
+
+    @media (max-width: 600px) {
+      .admin-nav-inner {
+        height: 56px;
+      }
+
+      .admin-user-info {
+        display: none;
+      }
+
+      .admin-badge {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body data-protected>
+
+  <!-- Loading State (shown while guard checks authentication) -->
+  <div id="guard-loading">
+    <div class="guard-spinner"></div>
+    <div class="guard-text">Verifying access...</div>
+  </div>
+
+  <!-- Protected Content (hidden until guard verifies auth + role) -->
+  <div id="protected-content">
+
+    <!-- Admin Navbar -->
+    <nav class="admin-nav">
+      <div class="admin-nav-inner">
+        <div class="admin-nav-left">
+          <div class="admin-nav-logo">
+            <div class="admin-nav-logo-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 22 22" fill="none">
+                <circle cx="11" cy="11" r="4" fill="#F97316" />
+                <path d="M11 2C11 2 5 6 5 11" stroke="white" stroke-width="2" stroke-linecap="round" />
+                <path d="M11 2C11 2 17 6 17 11" stroke="white" stroke-width="2" stroke-linecap="round" />
+                <path d="M2 11C2 11 6 17 11 17" stroke="white" stroke-width="2" stroke-linecap="round" />
+                <path d="M20 11C20 11 16 17 11 17" stroke="white" stroke-width="2" stroke-linecap="round" />
+              </svg>
+            </div>
+            <span class="admin-nav-logo-name">Tiranga</span>
+          </div>
+          <span class="admin-badge">Admin</span>
+        </div>
+
+        <div class="admin-nav-right">
+          <div class="admin-user-info">
+            <div class="admin-user-name" id="admin-display-name">Admin</div>
+            <div class="admin-user-role">Administrator</div>
+          </div>
+          <button class="logout-btn" id="logout-btn" aria-label="Sign out">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            Logout
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Coming Soon Content -->
+    <main class="coming-soon">
+      <div class="coming-soon-icon" aria-hidden="true">🚀</div>
+      <h1>Tiranga Admin Dashboard</h1>
+      <p>Coming Soon — The admin dashboard is currently under development. You'll be able to manage customers, billing,
+        technicians, and more from here.</p>
+
+      <div class="coming-soon-features">
+        <span class="feature-chip">📊 Analytics</span>
+        <span class="feature-chip">👥 Customers</span>
+        <span class="feature-chip">💳 Billing</span>
+        <span class="feature-chip">🛠 Complaints</span>
+        <span class="feature-chip">👷 Technicians</span>
+        <span class="feature-chip">📋 Reports</span>
+      </div>
+
+      <a href="index.html" class="home-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+          <polyline points="9 22 9 12 15 12 15 22" />
+        </svg>
+        Back to Website
+      </a>
+    </main>
+
+  </div>
+
+  <!-- Supabase JS CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Tiranga Auth Modules -->
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/roles.js"></script>
+  <script src="js/guard.js"></script>
+
+  <script>
+    'use strict';
+
+    // ── Protect this page — require admin role ────────────────────
+    TirangaGuard.protect({
+      requiredRole: 'admin',
+      onAuthorized: function (profile) {
+        // Display user name in the navbar
+        const nameEl = document.getElementById('admin-display-name');
+        if (nameEl && profile.full_name) {
+          nameEl.textContent = profile.full_name;
+        }
+      }
+    });
+
+    // ── Setup auth listener for session changes ───────────────────
+    TirangaGuard.setupAuthListener();
+
+    // ── Logout Button ─────────────────────────────────────────────
+    document.getElementById('logout-btn').addEventListener('click', async function () {
+      this.disabled = true;
+      this.textContent = 'Signing out...';
+
+      const result = await TirangaAuth.logout();
+
+      if (result.success) {
+        TirangaRoles.clearCache();
+        window.location.href = TIRANGA_CONFIG.LOGIN_PAGE;
+      } else {
+        this.disabled = false;
+        this.innerHTML = `
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          Logout`;
+        alert('Failed to sign out. Please try again.');
+      }
+    });
+  </script>
+
+</body>
+
+</html>
