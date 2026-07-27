@@ -16,10 +16,10 @@
 
 const TIRANGA_CONFIG = {
   // Replace with your Supabase Project URL
-  SUPABASE_URL: 'https://your-project-id.supabase.co',
+  SUPABASE_URL: 'https://ispcdlstxkpnzmvevche.supabase.co',
 
   // Replace with your Supabase Publishable Anon Key
-  SUPABASE_ANON_KEY: 'your-anon-key-here',
+  SUPABASE_ANON_KEY: 'sb_publishable_ammFxwfYgHemY4dUYTQrug_z5eqOS9B',
 
   // Application settings (do not modify unless necessary)
   APP_NAME: 'Tiranga Cable TV & Internet',
