@@ -146,8 +146,7 @@ const TirangaRoles = (function () {
         // Future: return '/technician.html';
         return TIRANGA_CONFIG.HOME_PAGE;
       case ROLES.CUSTOMER:
-        // Future: return '/customer.html';
-        return TIRANGA_CONFIG.HOME_PAGE;
+        return TIRANGA_CONFIG.CUSTOMER_PAGE || TIRANGA_CONFIG.HOME_PAGE;
       default:
         return TIRANGA_CONFIG.HOME_PAGE;
     }

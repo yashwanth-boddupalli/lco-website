@@ -658,6 +658,152 @@
       background: var(--red);
     }
 
+    /* COMPLAINT STATUS BADGES */
+    .badge-pending {
+      background: var(--yellow-pale);
+      color: #854D0E;
+    }
+
+    .badge-pending::before {
+      background: var(--yellow);
+    }
+
+    .badge-assigned {
+      background: var(--royal-pale);
+      color: #1E40AF;
+    }
+
+    .badge-assigned::before {
+      background: var(--royal);
+    }
+
+    .badge-in_progress {
+      background: var(--purple-pale);
+      color: #5B21B6;
+    }
+
+    .badge-in_progress::before {
+      background: var(--purple);
+    }
+
+    .badge-resolved {
+      background: var(--green-pale);
+      color: #166534;
+    }
+
+    .badge-resolved::before {
+      background: var(--green);
+    }
+
+    .badge-closed {
+      background: #F1F5F9;
+      color: var(--text-mid);
+    }
+
+    .badge-closed::before {
+      background: var(--text-light);
+    }
+
+    /* COMPLAINT PRIORITY CHIPS */
+    .prio {
+      display: inline-flex;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .prio-low {
+      background: #F1F5F9;
+      color: var(--text-mid);
+    }
+
+    .prio-medium {
+      background: var(--royal-pale);
+      color: var(--royal);
+    }
+
+    .prio-high {
+      background: var(--accent-pale);
+      color: #9A3412;
+    }
+
+    .prio-urgent {
+      background: var(--red-pale);
+      color: var(--red);
+    }
+
+    /* COMPLAINTS SECTION */
+    .section-divider {
+      margin: 44px 0 24px;
+      border-top: 1px solid var(--border);
+      padding-top: 28px;
+    }
+
+    .complaint-desc-cell {
+      max-width: 320px;
+      color: var(--text-mid);
+      font-size: .84rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .btn-view {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--green-pale);
+      color: var(--green);
+      transition: all var(--transition);
+    }
+
+    .btn-view:hover {
+      background: var(--green);
+      color: #fff;
+      transform: scale(1.05);
+    }
+
+    /* COMPLAINT DETAIL MODAL */
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px 24px;
+      margin-bottom: 20px;
+    }
+
+    .detail-item.full {
+      grid-column: 1 / -1;
+    }
+
+    .detail-label {
+      font-size: .72rem;
+      font-weight: 700;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: 2px;
+    }
+
+    .detail-value {
+      font-size: .9rem;
+      color: var(--text);
+      white-space: pre-wrap;
+    }
+
+    .detail-note {
+      font-size: .78rem;
+      color: var(--text-light);
+      margin-top: 6px;
+    }
+
     /* CONNECTION TYPE */
     .conn-chip {
       display: inline-flex;
@@ -1485,7 +1631,236 @@
         </div>
         <div class="table-footer"><span id="table-count">Loading...</span><span id="table-revenue">₹0 /mo</span></div>
       </div>
+
+      <!-- ══════════════ COMPLAINTS (Phase B) ══════════════ -->
+      <div class="section-divider">
+        <div class="page-header">
+          <h1>Complaints</h1>
+          <p>Track customer complaints, update their status and assign technicians.</p>
+        </div>
+
+        <!-- Complaint Stats -->
+        <div class="stats-grid" id="complaint-stats-grid">
+          <div class="stat-card stat-total">
+            <div class="stat-icon">📋</div>
+            <div class="stat-value" id="cstat-total"><span class="stat-skeleton"></span></div>
+            <div class="stat-label">Total Complaints</div>
+          </div>
+          <div class="stat-card stat-inactive">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-value" id="cstat-pending"><span class="stat-skeleton"></span></div>
+            <div class="stat-label">Pending</div>
+          </div>
+          <div class="stat-card stat-combo">
+            <div class="stat-icon">🧰</div>
+            <div class="stat-value" id="cstat-assigned"><span class="stat-skeleton"></span></div>
+            <div class="stat-label">Assigned</div>
+          </div>
+          <div class="stat-card stat-internet">
+            <div class="stat-icon">🔧</div>
+            <div class="stat-value" id="cstat-in-progress"><span class="stat-skeleton"></span></div>
+            <div class="stat-label">In Progress</div>
+          </div>
+          <div class="stat-card stat-active">
+            <div class="stat-icon">✔️</div>
+            <div class="stat-value" id="cstat-resolved"><span class="stat-skeleton"></span></div>
+            <div class="stat-label">Resolved</div>
+          </div>
+          <div class="stat-card stat-cable">
+            <div class="stat-icon">🚨</div>
+            <div class="stat-value" id="cstat-urgent"><span class="stat-skeleton"></span></div>
+            <div class="stat-label">Urgent</div>
+          </div>
+        </div>
+
+        <!-- Complaint Toolbar -->
+        <div class="toolbar">
+          <div class="search-box">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input type="text" id="complaint-search-input"
+              placeholder="Search by complaint ID, customer, phone, area...">
+          </div>
+          <select class="filter-select" id="complaint-status-filter" aria-label="Filter complaints by status">
+            <option value="">All Statuses</option>
+            <option value="pending">Pending</option>
+            <option value="assigned">Assigned</option>
+            <option value="in_progress">In Progress</option>
+            <option value="resolved">Resolved</option>
+            <option value="closed">Closed</option>
+          </select>
+          <select class="filter-select" id="complaint-priority-filter" aria-label="Filter complaints by priority">
+            <option value="">All Priorities</option>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+            <option value="urgent">Urgent</option>
+          </select>
+          <button class="btn-add" id="btn-refresh-complaints">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round">
+              <polyline points="23 4 23 10 17 10" />
+              <polyline points="1 20 1 14 7 14" />
+              <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" />
+            </svg>
+            Refresh
+          </button>
+        </div>
+
+        <!-- Complaints Table -->
+        <div class="table-wrap">
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Complaint ID</th>
+                  <th>Customer</th>
+                  <th>Phone</th>
+                  <th>Area</th>
+                  <th>Category</th>
+                  <th>Priority</th>
+                  <th>Status</th>
+                  <th>Created Date</th>
+                  <th>Assigned Technician</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="complaints-tbody">
+                <tr class="table-skeleton">
+                  <td>
+                    <div class="skel-bar w-20"></div>
+                  </td>
+                  <td>
+                    <div class="skel-bar w-40"></div>
+                  </td>
+                  <td>
+                    <div class="skel-bar w-30"></div>
+                  </td>
+                  <td>
+                    <div class="skel-bar w-24"></div>
+                  </td>
+                  <td>
+                    <div class="skel-bar w-40"></div>
+                  </td>
+                  <td>
+                    <div class="skel-bar w-16"></div>
+                  </td>
+                  <td>
+                    <div class="skel-bar w-24"></div>
+                  </td>
+                  <td>
+                    <div class="skel-bar w-30"></div>
+                  </td>
+                  <td>
+                    <div class="skel-bar w-24"></div>
+                  </td>
+                  <td>
+                    <div class="skel-bar w-16"></div>
+                  </td>
+                </tr>
+                <tr class="table-skeleton">
+                  <td>
+                    <div class="skel-bar w-20"></div>
+                  </td>
+                  <td>
+                    <div class="skel-bar w-50"></div>
+                  </td>
+                  <td>
+                    <div class="skel-bar w-30"></div>
+                  </td>
+                  <td>
+                    <div class="skel-bar w-24"></div>
+                  </td>
+                  <td>
+                    <div class="skel-bar w-30"></div>
+                  </td>
+                  <td>
+                    <div class="skel-bar w-16"></div>
+                  </td>
+                  <td>
+                    <div class="skel-bar w-24"></div>
+                  </td>
+                  <td>
+                    <div class="skel-bar w-30"></div>
+                  </td>
+                  <td>
+                    <div class="skel-bar w-24"></div>
+                  </td>
+                  <td>
+                    <div class="skel-bar w-16"></div>
+                  </td>
+                </tr>
+                <tr class="table-skeleton">
+                  <td>
+                    <div class="skel-bar w-20"></div>
+                  </td>
+                  <td>
+                    <div class="skel-bar w-30"></div>
+                  </td>
+                  <td>
+                    <div class="skel-bar w-30"></div>
+                  </td>
+                  <td>
+                    <div class="skel-bar w-24"></div>
+                  </td>
+                  <td>
+                    <div class="skel-bar w-40"></div>
+                  </td>
+                  <td>
+                    <div class="skel-bar w-16"></div>
+                  </td>
+                  <td>
+                    <div class="skel-bar w-24"></div>
+                  </td>
+                  <td>
+                    <div class="skel-bar w-30"></div>
+                  </td>
+                  <td>
+                    <div class="skel-bar w-24"></div>
+                  </td>
+                  <td>
+                    <div class="skel-bar w-16"></div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-footer"><span id="complaint-table-count">Loading...</span><span
+              id="complaint-table-note">Customer → Admin complaint flow</span></div>
+        </div>
+      </div>
     </main>
+  </div>
+
+  <!-- Complaint Detail / Manage Modal -->
+  <div class="modal-overlay" id="complaint-modal">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="complaint-modal-title">
+      <div class="modal-header">
+        <h2 id="complaint-modal-title">Complaint</h2>
+        <button class="modal-close" id="complaint-modal-close" aria-label="Close">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body" id="complaint-modal-body">
+        <div class="empty-state">
+          <h3>Loading complaint...</h3>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" id="complaint-modal-cancel">Close</button>
+        <button class="btn-save" id="complaint-modal-save">
+          <span class="save-spinner"></span>
+          <span class="save-text">Save Changes</span>
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- Add/Edit Modal -->
@@ -1586,6 +1961,7 @@
   <script src="js/roles.js"></script>
   <script src="js/guard.js"></script>
   <script src="js/customers.js"></script>
+  <script src="js/complaints.js"></script>
 
   <script>
     'use strict';
@@ -1614,6 +1990,7 @@
 
     async function initDashboard() {
       await refreshAll();
+      initComplaints();
 
       // Search with debounce
       document.getElementById('search-input').addEventListener('input', function () {
@@ -1864,8 +2241,221 @@
       }
     });
 
+    // ══════════════ COMPLAINTS (Phase B) ══════════════
+    let complaintDebounceTimer;
+    let _technicians = [];
+    let _openComplaint = null;
+
+    function initComplaints() {
+      document.getElementById('complaint-search-input').addEventListener('input', function () {
+        clearTimeout(complaintDebounceTimer);
+        complaintDebounceTimer = setTimeout(refreshComplaintTable, 300);
+      });
+      document.getElementById('complaint-status-filter').addEventListener('change', refreshComplaintTable);
+      document.getElementById('complaint-priority-filter').addEventListener('change', refreshComplaintTable);
+      document.getElementById('btn-refresh-complaints').addEventListener('click', refreshComplaints);
+      document.getElementById('complaint-modal-close').addEventListener('click', closeComplaintModal);
+      document.getElementById('complaint-modal-cancel').addEventListener('click', closeComplaintModal);
+      document.getElementById('complaint-modal-save').addEventListener('click', saveComplaintChanges);
+      document.getElementById('complaint-modal').addEventListener('click', function (e) {
+        if (e.target === this) closeComplaintModal();
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && document.getElementById('complaint-modal').classList.contains('open')) {
+          closeComplaintModal();
+        }
+      });
+
+      // Technicians come from profiles (role = 'technician') until the
+      // dedicated Technician module exists.
+      TirangaComplaints.getTechnicians().then(function (list) { _technicians = list; });
+
+      refreshComplaints();
+    }
+
+    async function refreshComplaints() {
+      await refreshComplaintTable();
+    }
+    window.refreshComplaints = refreshComplaints;
+
+    async function refreshComplaintTable() {
+      try {
+        const complaints = await TirangaComplaints.getAll({
+          search: document.getElementById('complaint-search-input').value.trim() || undefined,
+          status: document.getElementById('complaint-status-filter').value || undefined,
+          priority: document.getElementById('complaint-priority-filter').value || undefined,
+        });
+        renderComplaintStats(await TirangaComplaints.getStats(complaints));
+        renderComplaintTable(complaints);
+      } catch (err) {
+        console.error('[Dashboard] Failed to load complaints:', err);
+        renderComplaintStats(null);
+        const tbody = document.getElementById('complaints-tbody');
+        tbody.innerHTML = `<tr><td colspan="10"><div class="empty-state">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <h3>Failed to load complaints</h3>
+          <p>${esc(err.message || 'A database error occurred. Please try again.')}</p>
+          <button class="btn-add-empty" onclick="refreshComplaints()">Retry</button>
+        </div></td></tr>`;
+        document.getElementById('complaint-table-count').textContent = 'Error loading data';
+      }
+    }
+
+    function renderComplaintStats(s) {
+      const map = {
+        'cstat-total': s ? s.total : '—',
+        'cstat-pending': s ? s.pending : '—',
+        'cstat-assigned': s ? s.assigned : '—',
+        'cstat-in-progress': s ? s.in_progress : '—',
+        'cstat-resolved': s ? s.resolved : '—',
+        'cstat-urgent': s ? s.urgent : '—',
+      };
+      Object.keys(map).forEach(function (id) { animateStat(id, map[id]); });
+    }
+
+    function renderComplaintTable(complaints) {
+      const tbody = document.getElementById('complaints-tbody');
+      const count = document.getElementById('complaint-table-count');
+
+      if (!complaints.length) {
+        tbody.innerHTML = `<tr><td colspan="10"><div class="empty-state">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          <h3>No complaints found</h3>
+          <p>Complaints raised by customers will appear here.</p>
+        </div></td></tr>`;
+        count.textContent = '0 complaints';
+        return;
+      }
+
+      count.textContent = complaints.length + ' complaint' + (complaints.length !== 1 ? 's' : '');
+
+      tbody.innerHTML = complaints.map(function (c, i) {
+        return `
+        <tr class="row-animate" style="animation-delay: ${Math.min(i * 30, 300)}ms">
+          <td class="customer-id-cell">${esc(c.complaint_id || '—')}</td>
+          <td class="customer-name">${esc(TirangaComplaints.customerName(c))}</td>
+          <td>${esc(TirangaComplaints.customerPhone(c))}</td>
+          <td>${esc(TirangaComplaints.customerArea(c))}</td>
+          <td>${esc(c.category)}</td>
+          <td><span class="prio prio-${esc(c.priority)}">${esc(TirangaComplaints.PRIORITY_LABELS[c.priority] || c.priority)}</span></td>
+          <td><span class="badge badge-${esc(c.status)}">${esc(TirangaComplaints.STATUS_LABELS[c.status] || c.status)}</span></td>
+          <td>${esc(TirangaComplaints.formatDate(c.created_at))}</td>
+          <td>${esc(TirangaComplaints.technicianName(c))}</td>
+          <td class="actions">
+            <button class="btn-view" onclick="openComplaintModal('${c.id}')" title="View complaint details">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </td>
+        </tr>`;
+      }).join('');
+    }
+
+    async function openComplaintModal(id) {
+      const modal = document.getElementById('complaint-modal');
+      const body = document.getElementById('complaint-modal-body');
+      const saveBtn = document.getElementById('complaint-modal-save');
+
+      _openComplaint = null;
+      saveBtn.disabled = true;
+      saveBtn.classList.remove('loading');
+      document.getElementById('complaint-modal-title').textContent = 'Complaint';
+      body.innerHTML = '<div class="empty-state"><h3>Loading complaint...</h3></div>';
+      modal.classList.add('open');
+
+      try {
+        const c = await TirangaComplaints.getById(id);
+        if (!c) {
+          body.innerHTML = '<div class="empty-state"><h3>Complaint not found</h3><p>It may have been removed.</p></div>';
+          return;
+        }
+
+        _openComplaint = c;
+        saveBtn.disabled = false;
+        document.getElementById('complaint-modal-title').textContent = 'Complaint — ' + (c.complaint_id || '');
+
+        const techOptions = ['<option value="">Unassigned</option>'].concat(
+          _technicians.map(function (t) {
+            return `<option value="${esc(t.id)}"${c.technician_id === t.id ? ' selected' : ''}>${esc(t.full_name || t.id)}</option>`;
+          })
+        ).join('');
+
+        body.innerHTML = `
+          <div class="detail-grid">
+            <div class="detail-item"><div class="detail-label">Complaint ID</div><div class="detail-value customer-id-cell">${esc(c.complaint_id || '—')}</div></div>
+            <div class="detail-item"><div class="detail-label">Created Date</div><div class="detail-value">${esc(TirangaComplaints.formatDate(c.created_at))}</div></div>
+            <div class="detail-item"><div class="detail-label">Customer Name</div><div class="detail-value">${esc(TirangaComplaints.customerName(c))}</div></div>
+            <div class="detail-item"><div class="detail-label">Customer Phone</div><div class="detail-value">${esc(TirangaComplaints.customerPhone(c))}</div></div>
+            <div class="detail-item"><div class="detail-label">Customer Area</div><div class="detail-value">${esc(TirangaComplaints.customerArea(c))}</div></div>
+            <div class="detail-item"><div class="detail-label">Category</div><div class="detail-value">${esc(c.category)}</div></div>
+            <div class="detail-item full"><div class="detail-label">Description</div><div class="detail-value">${esc(c.description)}</div></div>
+            <div class="detail-item"><div class="detail-label">Assigned Technician</div><div class="detail-value">${esc(TirangaComplaints.technicianName(c))}</div></div>
+            <div class="detail-item"><div class="detail-label">Resolved Date</div><div class="detail-value">${esc(TirangaComplaints.formatDate(c.resolved_at))}</div></div>
+            <div class="detail-item"><div class="detail-label">Last Updated</div><div class="detail-value">${esc(TirangaComplaints.formatDate(c.updated_at))}</div></div>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="complaint-form-status">Status</label>
+              <select id="complaint-form-status">
+                ${TirangaComplaints.STATUSES.map(function (s) {
+                  return `<option value="${s}"${c.status === s ? ' selected' : ''}>${TirangaComplaints.STATUS_LABELS[s]}</option>`;
+                }).join('')}
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="complaint-form-priority">Priority</label>
+              <select id="complaint-form-priority">
+                ${TirangaComplaints.PRIORITIES.map(function (p) {
+                  return `<option value="${p}"${c.priority === p ? ' selected' : ''}>${TirangaComplaints.PRIORITY_LABELS[p]}</option>`;
+                }).join('')}
+              </select>
+            </div>
+            <div class="form-group full">
+              <label for="complaint-form-technician">Assign Technician</label>
+              <select id="complaint-form-technician">${techOptions}</select>
+              <div class="detail-note">${_technicians.length
+                ? 'Technicians are read from profiles with role \'technician\'.'
+                : 'No technicians available yet — assignment becomes usable once the Technician module is built.'}</div>
+            </div>
+          </div>`;
+      } catch (err) {
+        console.error('[Dashboard] Failed to load complaint:', err);
+        body.innerHTML = `<div class="empty-state"><h3>Failed to load complaint</h3><p>${esc(err.message || 'A database error occurred.')}</p></div>`;
+      }
+    }
+    window.openComplaintModal = openComplaintModal;
+
+    function closeComplaintModal() {
+      _openComplaint = null;
+      document.getElementById('complaint-modal').classList.remove('open');
+    }
+
+    async function saveComplaintChanges() {
+      if (!_openComplaint) return;
+
+      const btn = document.getElementById('complaint-modal-save');
+      btn.disabled = true;
+      btn.classList.add('loading');
+
+      const result = await TirangaComplaints.update(_openComplaint.id, {
+        status: document.getElementById('complaint-form-status').value,
+        priority: document.getElementById('complaint-form-priority').value,
+        technician_id: document.getElementById('complaint-form-technician').value || null,
+      });
+
+      btn.disabled = false;
+      btn.classList.remove('loading');
+
+      if (result.success) {
+        showToast('Complaint updated successfully.', 'success');
+        closeComplaintModal();
+        await refreshComplaints();
+      } else {
+        showToast('Update failed: ' + result.error, 'error');
+      }
+    }
+
     // ── Helpers ──
-    function esc(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
+    function esc(str) { const d = document.createElement('div'); d.textContent = str === null || str === undefined ? '' : str; return d.innerHTML; }
     function connLabel(t) { return { cable_tv: 'Cable TV', internet: 'Internet', combo: 'Combo' }[t] || t; }
 
     function showToast(msg, type) {

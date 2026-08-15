@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Account | Tiranga Cable TV &amp; Internet</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --navy: #0A1628;
+      --navy-light: #111D32;
+      --royal: #1E4DB7;
+      --royal-light: #2563EB;
+      --royal-pale: #EFF6FF;
+      --accent: #F97316;
+      --accent-pale: #FFF7ED;
+      --green: #16A34A;
+      --green-pale: #F0FDF4;
+      --red: #DC2626;
+      --red-pale: #FEF2F2;
+      --yellow: #EAB308;
+      --yellow-pale: #FEFCE8;
+      --purple: #7C3AED;
+      --purple-pale: #F5F3FF;
+      --bg: #F8FAFC;
+      --card: #FFFFFF;
+      --text: #1E293B;
+      --text-mid: #475569;
+      --text-light: #94A3B8;
+      --border: #E2E8F0;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, .08), 0 1px 2px rgba(0, 0, 0, .04);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, .08), 0 2px 4px rgba(0, 0, 0, .04);
+      --shadow-lg: 0 10px 30px rgba(0, 0, 0, .10), 0 4px 8px rgba(0, 0, 0, .05);
+      --radius: 14px;
+      --radius-sm: 8px;
+      --transition: 0.22s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-size: 16px;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      font-family: inherit;
+      border: none;
+      background: none;
+    }
+
+    :focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    /* GUARD LOADING */
+    #guard-loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      gap: 20px;
+      background: var(--bg);
+    }
+
+    .guard-spinner {
+      width: 44px;
+      height: 44px;
+      border: 3px solid var(--border);
+      border-top-color: var(--royal);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .guard-text {
+      font-size: .9rem;
+      color: var(--text-light);
+      font-weight: 500;
+    }
+
+    /* NAVBAR */
+    .admin-nav {
+      background: var(--navy);
+      padding: 0 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, .08);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .admin-nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+
+    .admin-nav-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .admin-nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .admin-nav-logo-icon {
+      width: 36px;
+      height: 36px;
+      background: rgba(255, 255, 255, .1);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .admin-nav-logo-name {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.02em;
+    }
+
+    .admin-badge {
+      padding: 3px 10px;
+      background: rgba(30, 77, 183, .25);
+      border: 1px solid rgba(37, 99, 235, .45);
+      border-radius: 99px;
+      font-size: .7rem;
+      font-weight: 700;
+      color: #93C5FD;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .admin-nav-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .admin-user-info {
+      text-align: right;
+    }
+
+    .admin-user-name {
+      font-size: .85rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .admin-user-role {
+      font-size: .72rem;
+      color: rgba(255, 255, 255, .5);
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      background: rgba(220, 38, 38, .15);
+      border: 1px solid rgba(220, 38, 38, .3);
+      color: #FCA5A5;
+      border-radius: 99px;
+      font-size: .82rem;
+      font-weight: 600;
+      transition: all var(--transition);
+    }
+
+    .logout-btn:hover {
+      background: rgba(220, 38, 38, .3);
+      color: #fff;
+    }
+
+    /* MAIN */
+    #protected-content {
+      display: none;
+    }
+
+    .admin-main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+    }
+
+    .page-header {
+      margin-bottom: 28px;
+    }
+
+    .page-header h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+    }
+
+    .page-header p {
+      font-size: .9rem;
+      color: var(--text-light);
+    }
+
+    .section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 28px;
+      overflow: hidden;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-head h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .section-head p {
+      font-size: .82rem;
+      color: var(--text-light);
+    }
+
+    .section-body {
+      padding: 22px;
+    }
+
+    /* FORM */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    .form-group label {
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--text-mid);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: .9rem;
+      color: var(--text);
+      background: #fff;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--royal-light);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, .12);
+    }
+
+    .form-group textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .form-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 22px;
+      background: var(--royal);
+      color: #fff;
+      border-radius: 99px;
+      font-size: .88rem;
+      font-weight: 600;
+      transition: all var(--transition);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--royal-light);
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-primary:disabled {
+      opacity: .65;
+      cursor: not-allowed;
+    }
+
+    .btn-ghost {
+      padding: 11px 18px;
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      font-size: .85rem;
+      font-weight: 600;
+      color: var(--text-mid);
+      background: #fff;
+      transition: all var(--transition);
+    }
+
+    .btn-ghost:hover {
+      background: var(--bg);
+    }
+
+    .btn-spinner {
+      width: 15px;
+      height: 15px;
+      border: 2px solid rgba(255, 255, 255, .4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      display: none;
+    }
+
+    .btn-primary.loading .btn-spinner {
+      display: inline-block;
+    }
+
+    /* INLINE MESSAGES */
+    .alert {
+      display: none;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 14px 16px;
+      border-radius: var(--radius-sm);
+      font-size: .88rem;
+      margin-bottom: 18px;
+    }
+
+    .alert.show {
+      display: flex;
+    }
+
+    .alert-success {
+      background: var(--green-pale);
+      border: 1px solid rgba(22, 163, 74, .3);
+      color: #14532D;
+    }
+
+    .alert-error {
+      background: var(--red-pale);
+      border: 1px solid rgba(220, 38, 38, .3);
+      color: #7F1D1D;
+    }
+
+    .alert strong {
+      font-family: 'Courier New', monospace;
+      letter-spacing: .02em;
+    }
+
+    /* COMPLAINT LIST */
+    .complaint-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .complaint-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+      transition: box-shadow var(--transition);
+      animation: fadeInRow .3s ease both;
+    }
+
+    .complaint-card:hover {
+      box-shadow: var(--shadow-sm);
+    }
+
+    @keyframes fadeInRow {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .complaint-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .complaint-id {
+      font-family: 'Courier New', monospace;
+      font-weight: 700;
+      color: var(--royal);
+      font-size: .88rem;
+    }
+
+    .complaint-category {
+      font-weight: 600;
+    }
+
+    .complaint-desc {
+      font-size: .88rem;
+      color: var(--text-mid);
+      white-space: pre-wrap;
+      margin-bottom: 10px;
+    }
+
+    .complaint-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: .78rem;
+      color: var(--text-light);
+    }
+
+    .chips {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 12px;
+      border-radius: 99px;
+      font-size: .75rem;
+      font-weight: 600;
+    }
+
+    .badge-pending {
+      background: var(--yellow-pale);
+      color: #854D0E;
+    }
+
+    .badge-assigned {
+      background: var(--royal-pale);
+      color: #1E40AF;
+    }
+
+    .badge-in_progress {
+      background: var(--purple-pale);
+      color: #5B21B6;
+    }
+
+    .badge-resolved {
+      background: var(--green-pale);
+      color: #166534;
+    }
+
+    .badge-closed {
+      background: #F1F5F9;
+      color: var(--text-mid);
+    }
+
+    .prio {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 99px;
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .prio-low {
+      background: #F1F5F9;
+      color: var(--text-mid);
+    }
+
+    .prio-medium {
+      background: var(--royal-pale);
+      color: #1E40AF;
+    }
+
+    .prio-high {
+      background: var(--accent-pale);
+      color: #9A3412;
+    }
+
+    .prio-urgent {
+      background: var(--red-pale);
+      color: #991B1B;
+    }
+
+    /* STATES */
+    .state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-light);
+    }
+
+    .state h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-mid);
+      margin-bottom: 6px;
+    }
+
+    .state p {
+      font-size: .86rem;
+    }
+
+    .state .btn-ghost {
+      margin-top: 14px;
+    }
+
+    .skel-card {
+      height: 96px;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(90deg, var(--border) 25%, #f1f5f9 50%, var(--border) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s ease infinite;
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: 200% 0;
+      }
+
+      100% {
+        background-position: -200% 0;
+      }
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 20px;
+      border-radius: var(--radius-sm);
+      background: var(--card);
+      box-shadow: var(--shadow-lg);
+      font-size: .88rem;
+      font-weight: 500;
+      transform: translateY(20px);
+      opacity: 0;
+      pointer-events: none;
+      transition: all var(--transition);
+      z-index: 300;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .toast-success {
+      border-left: 4px solid var(--green);
+    }
+
+    .toast-error {
+      border-left: 4px solid var(--red);
+    }
+
+    .toast-icon {
+      font-weight: 800;
+    }
+
+    @media (max-width: 700px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .admin-user-info {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body data-protected>
+  <!-- Loading State -->
+  <div id="guard-loading">
+    <div class="guard-spinner"></div>
+    <div class="guard-text">Verifying access...</div>
+  </div>
+
+  <!-- Protected Content -->
+  <div id="protected-content">
+    <nav class="admin-nav">
+      <div class="admin-nav-inner">
+        <div class="admin-nav-left">
+          <div class="admin-nav-logo">
+            <div class="admin-nav-logo-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 22 22" fill="none">
+                <circle cx="11" cy="11" r="4" fill="#F97316" />
+                <path d="M11 2C11 2 5 6 5 11" stroke="white" stroke-width="2" stroke-linecap="round" />
+                <path d="M11 2C11 2 17 6 17 11" stroke="white" stroke-width="2" stroke-linecap="round" />
+                <path d="M2 11C2 11 6 17 11 17" stroke="white" stroke-width="2" stroke-linecap="round" />
+                <path d="M20 11C20 11 16 17 11 17" stroke="white" stroke-width="2" stroke-linecap="round" />
+              </svg>
+            </div>
+            <span class="admin-nav-logo-name">Tiranga</span>
+          </div>
+          <span class="admin-badge">Customer</span>
+        </div>
+        <div class="admin-nav-right">
+          <div class="admin-user-info">
+            <div class="admin-user-name" id="customer-display-name">Customer</div>
+            <div class="admin-user-role">My Account</div>
+          </div>
+          <button class="logout-btn" id="logout-btn" aria-label="Sign out">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            Logout
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <main class="admin-main">
+      <div class="page-header">
+        <h1>My Account</h1>
+        <p>Raise a service complaint and track its progress.</p>
+      </div>
+
+      <!-- Raise Complaint -->
+      <section class="section" id="raise-complaint">
+        <div class="section-head">
+          <div>
+            <h2>Raise Complaint</h2>
+            <p>Tell us what is wrong and our team will look into it.</p>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="alert alert-success" id="submit-success" role="status"></div>
+          <div class="alert alert-error" id="submit-error" role="alert"></div>
+
+          <form id="complaint-form" novalidate>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="complaint-category">Complaint Category *</label>
+                <select id="complaint-category" required>
+                  <option value="">Select a category</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="complaint-priority">Priority *</label>
+                <select id="complaint-priority" required>
+                  <option value="low">Low</option>
+                  <option value="medium" selected>Medium</option>
+                  <option value="high">High</option>
+                  <option value="urgent">Urgent</option>
+                </select>
+              </div>
+              <div class="form-group full">
+                <label for="complaint-description">Description *</label>
+                <textarea id="complaint-description"
+                  placeholder="Describe the problem — when it started, what you have already tried..."
+                  required></textarea>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn-primary" id="submit-complaint-btn">
+                <span class="btn-spinner"></span>
+                <span class="btn-text">Submit Complaint</span>
+              </button>
+              <button type="button" class="btn-ghost" id="reset-complaint-btn">Clear</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- My Complaints -->
+      <section class="section" id="my-complaints">
+        <div class="section-head">
+          <div>
+            <h2>My Complaints</h2>
+            <p id="complaints-count">Loading...</p>
+          </div>
+          <button class="btn-ghost" id="refresh-complaints-btn">Refresh</button>
+        </div>
+        <div class="section-body">
+          <div class="complaint-list" id="complaint-list">
+            <div class="skel-card"></div>
+            <div class="skel-card"></div>
+            <div class="skel-card"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="alert"><span class="toast-icon"></span><span class="toast-msg"></span></div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/roles.js"></script>
+  <script src="js/guard.js"></script>
+  <script src="js/complaints.js"></script>
+
+  <script>
+    'use strict';
+
+    // ── Protect page ──
+    TirangaGuard.protect({
+      requiredRole: 'customer',
+      onAuthorized: function (profile) {
+        const nameEl = document.getElementById('customer-display-name');
+        if (nameEl && profile.full_name) nameEl.textContent = profile.full_name;
+        initCustomerPage();
+      }
+    });
+    TirangaGuard.setupAuthListener();
+
+    // ── Logout ──
+    document.getElementById('logout-btn').addEventListener('click', async function () {
+      this.disabled = true;
+      this.textContent = 'Signing out...';
+      const result = await TirangaAuth.logout();
+      if (result.success) {
+        TirangaRoles.clearCache();
+        window.location.href = TIRANGA_CONFIG.LOGIN_PAGE;
+      } else {
+        this.disabled = false;
+        this.textContent = 'Logout';
+        showToast('Failed to sign out.', 'error');
+      }
+    });
+
+    function initCustomerPage() {
+      // Populate categories from the shared module so the UI and the
+      // database CHECK constraint can never drift apart.
+      const catSelect = document.getElementById('complaint-category');
+      TirangaComplaints.CATEGORIES.forEach(function (cat) {
+        const opt = document.createElement('option');
+        opt.value = cat;
+        opt.textContent = cat;
+        catSelect.appendChild(opt);
+      });
+
+      document.getElementById('complaint-form').addEventListener('submit', handleSubmit);
+      document.getElementById('reset-complaint-btn').addEventListener('click', function () {
+        document.getElementById('complaint-form').reset();
+        hideAlerts();
+      });
+      document.getElementById('refresh-complaints-btn').addEventListener('click', loadMyComplaints);
+
+      loadMyComplaints();
+    }
+
+    // ── Submit complaint ──
+    async function handleSubmit(e) {
+      e.preventDefault();
+      hideAlerts();
+
+      const form = document.getElementById('complaint-form');
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      const btn = document.getElementById('submit-complaint-btn');
+      btn.disabled = true;
+      btn.classList.add('loading');
+      btn.querySelector('.btn-text').textContent = 'Submitting...';
+
+      // customer_id, user id and timestamps are set by the database from
+      // the authenticated session — never from this form.
+      const result = await TirangaComplaints.create({
+        category: document.getElementById('complaint-category').value,
+        description: document.getElementById('complaint-description').value,
+        priority: document.getElementById('complaint-priority').value,
+      });
+
+      btn.disabled = false;
+      btn.classList.remove('loading');
+      btn.querySelector('.btn-text').textContent = 'Submit Complaint';
+
+      if (result.success) {
+        const success = document.getElementById('submit-success');
+        success.innerHTML = 'Complaint submitted successfully. Complaint ID: <strong>' +
+          esc(result.data.complaint_id || '—') + '</strong>';
+        success.classList.add('show');
+        form.reset();
+        showToast('Complaint submitted successfully.', 'success');
+        await loadMyComplaints();
+      } else {
+        const box = document.getElementById('submit-error');
+        box.textContent = 'Could not submit your complaint: ' + result.error;
+        box.classList.add('show');
+        showToast('Failed to submit complaint.', 'error');
+      }
+    }
+
+    // ── My complaints ──
+    async function loadMyComplaints() {
+      const list = document.getElementById('complaint-list');
+      const count = document.getElementById('complaints-count');
+      list.innerHTML = '<div class="skel-card"></div><div class="skel-card"></div>';
+      count.textContent = 'Loading...';
+
+      try {
+        const complaints = await TirangaComplaints.getMine();
+        renderComplaints(complaints);
+      } catch (err) {
+        console.error('[Customer] Failed to load complaints:', err);
+        count.textContent = 'Could not load complaints';
+        list.innerHTML = '<div class="state">' +
+          '<h3>Failed to load your complaints</h3>' +
+          '<p>' + esc(err.message || 'A database error occurred.') + '</p>' +
+          '<button class="btn-ghost" onclick="loadMyComplaints()">Retry</button>' +
+          '</div>';
+      }
+    }
+    window.loadMyComplaints = loadMyComplaints;
+
+    function renderComplaints(complaints) {
+      const list = document.getElementById('complaint-list');
+      const count = document.getElementById('complaints-count');
+
+      if (!complaints.length) {
+        count.textContent = 'No complaints yet';
+        list.innerHTML = '<div class="state">' +
+          '<h3>No complaints yet</h3>' +
+          '<p>When you raise a complaint it will appear here with its live status.</p>' +
+          '</div>';
+        return;
+      }
+
+      count.textContent = complaints.length + ' complaint' + (complaints.length !== 1 ? 's' : '');
+
+      list.innerHTML = complaints.map(function (c, i) {
+        return '<article class="complaint-card" style="animation-delay:' + Math.min(i * 40, 300) + 'ms">' +
+          '<div class="complaint-top">' +
+          '<div><span class="complaint-id">' + esc(c.complaint_id || '—') + '</span> · ' +
+          '<span class="complaint-category">' + esc(c.category) + '</span></div>' +
+          '<div class="chips">' +
+          '<span class="prio prio-' + esc(c.priority) + '">' +
+          esc(TirangaComplaints.PRIORITY_LABELS[c.priority] || c.priority) + '</span>' +
+          '<span class="badge badge-' + esc(c.status) + '">' +
+          esc(TirangaComplaints.STATUS_LABELS[c.status] || c.status) + '</span>' +
+          '</div></div>' +
+          '<p class="complaint-desc">' + esc(c.description) + '</p>' +
+          '<div class="complaint-meta">' +
+          '<span>Created: ' + esc(TirangaComplaints.formatDate(c.created_at)) + '</span>' +
+          '<span>Last updated: ' + esc(TirangaComplaints.formatDate(c.updated_at)) + '</span>' +
+          (c.resolved_at ? '<span>Resolved: ' + esc(TirangaComplaints.formatDate(c.resolved_at)) + '</span>' : '') +
+          '</div>' +
+          '</article>';
+      }).join('');
+    }
+
+    // ── Helpers ──
+    function hideAlerts() {
+      document.getElementById('submit-success').classList.remove('show');
+      document.getElementById('submit-error').classList.remove('show');
+    }
+
+    function esc(str) {
+      const d = document.createElement('div');
+      d.textContent = str === null || str === undefined ? '' : str;
+      return d.innerHTML;
+    }
+
+    function showToast(msg, type) {
+      const t = document.getElementById('toast');
+      const iconMap = { success: '✓', error: '✕' };
+      t.querySelector('.toast-icon').textContent = iconMap[type] || '';
+      t.querySelector('.toast-msg').textContent = msg;
+      t.className = 'toast toast-' + type + ' show';
+      clearTimeout(t._timer);
+      t._timer = setTimeout(function () { t.classList.remove('show'); }, 3500);
+    }
+  </script>
+</body>
+
+</html>
