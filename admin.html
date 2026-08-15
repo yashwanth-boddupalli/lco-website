@@ -2245,6 +2245,15 @@
     let complaintDebounceTimer;
     let _technicians = [];
     let _openComplaint = null;
+    let _techniciansLoaded = Promise.resolve();
+
+    function hasComplaintFilters() {
+      return Boolean(
+        document.getElementById('complaint-search-input').value.trim() ||
+        document.getElementById('complaint-status-filter').value ||
+        document.getElementById('complaint-priority-filter').value
+      );
+    }
 
     function initComplaints() {
       document.getElementById('complaint-search-input').addEventListener('input', function () {
@@ -2268,7 +2277,7 @@
 
       // Technicians come from profiles (role = 'technician') until the
       // dedicated Technician module exists.
-      TirangaComplaints.getTechnicians().then(function (list) { _technicians = list; });
+      _techniciansLoaded = TirangaComplaints.getTechnicians().then(function (list) { _technicians = list; });
 
       refreshComplaints();
     }
@@ -2285,7 +2294,8 @@
           status: document.getElementById('complaint-status-filter').value || undefined,
           priority: document.getElementById('complaint-priority-filter').value || undefined,
         });
-        renderComplaintStats(await TirangaComplaints.getStats(complaints));
+        const filtered = hasComplaintFilters();
+        renderComplaintStats(await TirangaComplaints.getStats(filtered ? undefined : complaints));
         renderComplaintTable(complaints);
       } catch (err) {
         console.error('[Dashboard] Failed to load complaints:', err);
@@ -2373,8 +2383,17 @@
         saveBtn.disabled = false;
         document.getElementById('complaint-modal-title').textContent = 'Complaint — ' + (c.complaint_id || '');
 
+        await _techniciansLoaded;
+
+        // Keep an already-assigned technician selectable even when they are
+        // missing from the list, so saving cannot silently unassign them.
+        const techList = _technicians.slice();
+        if (c.technician_id && !techList.some(function (t) { return t.id === c.technician_id; })) {
+          techList.unshift({ id: c.technician_id, full_name: TirangaComplaints.technicianName(c) });
+        }
+
         const techOptions = ['<option value="">Unassigned</option>'].concat(
-          _technicians.map(function (t) {
+          techList.map(function (t) {
             return `<option value="${esc(t.id)}"${c.technician_id === t.id ? ' selected' : ''}>${esc(t.full_name || t.id)}</option>`;
           })
         ).join('');
@@ -2412,7 +2431,7 @@
             <div class="form-group full">
               <label for="complaint-form-technician">Assign Technician</label>
               <select id="complaint-form-technician">${techOptions}</select>
-              <div class="detail-note">${_technicians.length
+              <div class="detail-note">${techList.length
                 ? 'Technicians are read from profiles with role \'technician\'.'
                 : 'No technicians available yet — assignment becomes usable once the Technician module is built.'}</div>
             </div>
