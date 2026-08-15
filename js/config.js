@@ -26,6 +26,7 @@ const TIRANGA_CONFIG = {
   LOGIN_PAGE: '/login.html',
   HOME_PAGE: '/index.html',
   ADMIN_PAGE: '/admin.html',
+  CUSTOMER_PAGE: '/customer.html',
   SESSION_KEY: 'tiranga_session',
   REMEMBER_ME_KEY: 'tiranga_remember',
 };
