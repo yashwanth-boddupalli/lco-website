@@ -142,3 +142,114 @@ Phase B should be treated as implemented but untested in production.
   `profiles` policy (see `profiles_setup.sql`). That is pre-existing and was not
   changed in this phase; `public.tiranga_is_admin()` is available if you want to
   rewrite them safely later.
+
+## Phase C1 — Technician Management (database foundation)
+
+Database only. No technician UI, and the Phase A (customers) and Phase B
+(complaints) code paths are untouched.
+
+### Files created
+
+| File | Purpose |
+|------|---------|
+| `technicians_setup.sql` | Migration: `technicians` table, `TRG-TECH-####` identifier, `updated_at` trigger, RLS, indexes |
+
+### Files modified
+
+| File | Change |
+|------|--------|
+| `PROJECT_STATUS.md` | This section |
+
+### Existing objects inspected and reused
+
+- `public.profiles` (roles `admin` / `technician` / `customer`) — technicians
+  reference it, it is not re-created.
+- `public.is_admin()` — already present in the live project and recursion-safe;
+  reused as the admin predicate. `public.tiranga_is_admin()` (Phase B) is used
+  as a fallback, and the migration only defines `is_admin()` if neither exists,
+  so an existing definition is never overwritten.
+- `public.handle_updated_at()` — reused for the technicians `updated_at`
+  trigger; only created when missing.
+- `public.complaints.technician_id` (Phase B) is still a plain nullable UUID
+  referencing `profiles`; it is deliberately *not* repointed at
+  `technicians.id` in this phase.
+- No technician table or technician-specific function existed beforehand
+  (verified against the live project: `public.technicians` returns 404 and
+  `public.generate_technician_id()` does not exist).
+
+### Table `public.technicians`
+
+| Column | Type | Notes |
+|--------|------|-------|
+| `id` | UUID PK | `gen_random_uuid()` |
+| `profile_id` | UUID NOT NULL UNIQUE | FK → `profiles(id)` ON DELETE CASCADE; one technician record per auth user |
+| `technician_id` | TEXT NOT NULL UNIQUE | defaults to `public.generate_technician_id()` → `TRG-TECH-0001` |
+| `full_name` | TEXT NOT NULL | non-empty |
+| `phone` | TEXT NOT NULL | non-empty |
+| `alternate_phone` | TEXT | nullable |
+| `address` | TEXT | nullable |
+| `area` | TEXT NOT NULL | non-empty; service area used later for assignment |
+| `status` | TEXT NOT NULL | CHECK `active` / `inactive` / `suspended`, default `active` |
+| `created_at` / `updated_at` | TIMESTAMPTZ NOT NULL | default `now()`; `updated_at` maintained by trigger |
+
+### Technician ID generation
+
+`public.technician_id_seq` + `public.generate_technician_id()` (SECURITY
+DEFINER, `search_path = public, pg_temp`) produce `TRG-TECH-####` from a
+sequence, so concurrent inserts cannot collide. `EXECUTE` is revoked from
+`PUBLIC` and granted only to `authenticated`, so anonymous callers cannot burn
+identifiers through PostgREST RPC.
+
+### Security model / RLS
+
+RLS is enabled on `public.technicians`.
+
+| Policy | Command | Rule |
+|--------|---------|------|
+| Technicians can view own record | SELECT | `profile_id = auth.uid()` |
+| Admins can view all technicians | SELECT | admin helper |
+| Admins can insert technicians | INSERT | admin helper |
+| Admins can update technicians | UPDATE | admin helper |
+| Admins can delete technicians | DELETE | admin helper |
+
+No policy reads `technicians` from inside a `technicians` policy, and the admin
+check is a SECURITY DEFINER function rather than an inline `profiles`
+sub-select, so the recursion problem previously hit on `profiles` cannot occur.
+
+### Indexes
+
+`profile_id`, `technician_id`, `area`, `status`, `phone` — all created with
+`IF NOT EXISTS`.
+
+### Verification performed
+
+Run against a throwaway PostgreSQL 16 with a stub `auth` schema and `profiles`:
+migration applies cleanly and is idempotent on re-run; `TRG-TECH-0001` /
+`TRG-TECH-0002` generated in order; the `updated_at` trigger fires only on the
+updated row; a technician sees exactly their own record and cannot update,
+delete or insert; and on a database *without* `is_admin()` the migration creates
+it and still installs all five policies.
+
+No SQL was executed against the live Supabase project — the migration must be
+run manually in the SQL editor.
+
+### Remaining for C2
+
+- Admin technician management UI (list, add, edit, deactivate) and a
+  `js/technicians.js` module.
+- Technician dashboard/portal.
+- Switch complaint assignment to `technicians` (populate the assignment dropdown
+  from `technicians` where `status = 'active'`, decide whether
+  `complaints.technician_id` should reference `technicians.id` or stay on
+  `profiles.id`, and add a technician-scoped policy so an assigned technician can
+  read and update their own complaints).
+- Backfill technician records for existing `profiles` rows with
+  `role = 'technician'`.
+
+### Notes
+
+- Phase B's `public.generate_complaint_id()` is currently executable by the
+  `anon` role via PostgREST RPC, so an anonymous caller can advance the
+  complaint-number sequence (it cannot create complaints). Mirroring the
+  `REVOKE ... FROM PUBLIC` used in Phase C1 would close that; it is left alone
+  here so this phase does not modify Phase B objects.
